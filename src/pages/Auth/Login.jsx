@@ -5,7 +5,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#373A40] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#DCDCDC] flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-gray-100">
         {/* Header */}
         <div className="text-center mb-8">

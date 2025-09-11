@@ -3,10 +3,9 @@ import { Mail, Lock, Eye, EyeOff, User, CheckCircle } from "lucide-react";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#373A40] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#DCDCDC  ] flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-gray-100">
         {/* Header */}
         <div className="text-center mb-8">
@@ -18,6 +17,22 @@ const Register = () => {
 
         {/* Register Form */}
         <div className="space-y-5">
+ 
+          {/* Username Field */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <User className="h-5 w-5 text-gray-500" />
+            </div>
+            <input
+              type="text"
+              name="username"
+              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 
+              focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent 
+              transition-all duration-200 placeholder-gray-500 text-gray-800"
+              placeholder="Username"
+            />
+          </div>
+
           {/* Name Field */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -77,32 +92,7 @@ const Register = () => {
           </div>
 
           {/* Confirm Password Field */}
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <CheckCircle className="h-5 w-5 text-gray-500" />
-            </div>
-            <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-              {showConfirmPassword ? (
-                <Eye
-                  className="h-5 w-5 text-gray-500 cursor-pointer hover:text-gray-700 transition-colors duration-200"
-                  onClick={() => setShowConfirmPassword(false)}
-                />
-              ) : (
-                <EyeOff
-                  className="h-5 w-5 text-gray-500 cursor-pointer hover:text-gray-700 transition-colors duration-200"
-                  onClick={() => setShowConfirmPassword(true)}
-                />
-              )}
-            </div>
-            <input
-              type={showConfirmPassword ? "text" : "password"}
-              name="confirmPassword"
-              className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-gray-50 border border-gray-200 
-              focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent 
-              transition-all duration-200 placeholder-gray-500 text-gray-800"
-              placeholder="Confirm Password"
-            />
-          </div>
+         
 
           {/* Terms and Conditions */}
           <div className="flex items-start text-sm mt-4">
