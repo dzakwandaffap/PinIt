@@ -1,22 +1,47 @@
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, User, CheckCircle } from "lucide-react";
+import api from "../../Services/api";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    username: "",
+    name: "",
+    email: "",
+    password: "",
+    
+  })
+
+    const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/users/', form);
+      console.log('Registration successful:', response.data);
+      // navigate('/home');
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-[#DCDCDC  ] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#DCDCDC] flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-gray-100">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Create Account
+            Register
           </h1>
           <p className="text-gray-600">Sign up to get started</p>
         </div>
 
         {/* Register Form */}
-        <div className="space-y-5">
+        <form onSubmit={handleRegister} className="space-y-5">
  
           {/* Username Field */}
           <div className="relative">
@@ -26,6 +51,8 @@ const Register = () => {
             <input
               type="text"
               name="username"
+              value={form.username}
+              onChange={handleChange}
               className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 
               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent 
               transition-all duration-200 placeholder-gray-500 text-gray-800"
@@ -40,7 +67,9 @@ const Register = () => {
             </div>
             <input
               type="text"
-              name="fullName"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
               className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 
               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent 
               transition-all duration-200 placeholder-gray-500 text-gray-800"
@@ -56,6 +85,8 @@ const Register = () => {
             <input
               type="email"
               name="email"
+              value={form.email}
+              onChange={handleChange}
               className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 
               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent 
               transition-all duration-200 placeholder-gray-500 text-gray-800"
@@ -84,6 +115,8 @@ const Register = () => {
             <input
               type={showPassword ? "text" : "password"}
               name="password"
+              value={form.password}
+              onChange={handleChange}
               className="w-full pl-12 pr-12 py-3.5 rounded-xl bg-gray-50 border border-gray-200 
               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent 
               transition-all duration-200 placeholder-gray-500 text-gray-800"
@@ -121,7 +154,7 @@ const Register = () => {
           >
             Create Account
           </button>
-        </div>
+        </form>
 
         {/* Divider */}
         <div className="mt-8 flex items-center">
@@ -175,12 +208,12 @@ const Register = () => {
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-sm">
             Already have an account?{" "}
-            <a
-              href="#"
+            <button 
+              onClick={() => navigate("/login")}
               className="text-gray-800 hover:text-gray-900 font-semibold transition-colors duration-200 "
             >
               Sign in
-            </a>
+            </button>
           </p>
         </div>
       </div>
