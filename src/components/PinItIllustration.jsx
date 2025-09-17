@@ -11,22 +11,22 @@ const PinItIllustration = () => {
       >
         {/* Background Board */}
         <rect width="600" height="450" rx="24" fill="#959595ff"/>
-        <rect x="50" y="50" width="500" height="350" rx="16" fill="#dde3e9ff" stroke="#CBD5E1" stroke-width="2"/>
+        <rect x="50" y="50" width="500" height="350" rx="16" fill="#dde3e9ff" stroke="#CBD5E1" strokeWidth="2"/>
 
         {/* --- Sticky Notes (hanya 2: Merah & Kuning) --- */}
         <g id="task-1">
           <rect x="80" y="80" width="150" height="100" rx="8" fill="#FDE68A"/> {/* Pink */}
-          <path d="M96 110L214 110" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
-          <path d="M96 130L170 130" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
-          <path d="M96 150L200 150" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+          <path d="M96 110L214 110" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M96 130L170 130" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M96 150L200 150" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round"/>
           <path d="M190 80L190 70C190 64.4772 194.477 60 200 60C205.523 60 210 64.4772 210 70V80H190Z" fill="#F06292"/>
         </g>
 
         <g id="task-2">
           <rect x="80" y="210" width="150" height="100" rx="8" fill="#FDE68A"/> {/* Kuning */}
-          <path d="M96 240L214 240" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
-          <path d="M96 260L170 260" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
-          <path d="M96 280L200 280" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+          <path d="M96 240L214 240" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M96 260L170 260" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round"/>
+          <path d="M96 280L200 280" stroke="#94A3B8" strokeWidth="3" strokeLinecap="round"/>
           <path d="M190 210L190 200C190 194.477 194.477 190 200 190C205.523 190 210 194.477 210 200V210H190Z" fill="#717171ff"/>
         </g>
         

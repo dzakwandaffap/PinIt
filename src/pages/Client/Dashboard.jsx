@@ -2,13 +2,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Pencil, Users, Star } from 'lucide-react';
-import PinItIllustration from '../../components/PinItIllustration'; // Import komponen ilustrasi
+import PinItIllustration from '../../components/PinItIllustration'; 
+import TemplateNav from '../../Layout/TemplateNav';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
     return (
-      
+      <TemplateNav>
         <div className="min-h-screen bg-white text-gray-900 font-sans">
             
       <div className="w-full max-w-6xl mx-auto py-12 md:py-24 px-4 sm:px-6 lg:px-8">
@@ -111,7 +112,8 @@ const Dashboard = () => {
 </div>
 
       </div>
-    </div>
+        </div>
+        </TemplateNav>
   );
 };
 
