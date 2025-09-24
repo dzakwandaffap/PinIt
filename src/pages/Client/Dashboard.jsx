@@ -18,15 +18,14 @@ const Dashboard = () => {
         <div className="flex flex-col-reverse md:flex-row items-center justify-between mb-20 md:mb-32">
           <div className="w-full md:w-1/2 text-center md:text-left mt-12 md:mt-0">
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight mb-4">
-              Your home for ideas.
+              Keep your ideas Alive.
             </h1>
             <p className="text-lg md:text-xl text-gray-600 max-w-xl mb-8">
               Welcome back to your creative space. Discover, collect, and share the inspirations that define your vision.
             </p>
             <button
-              onClick={() => navigate('/create-pin')}
-              className="bg-gray-900 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-800 "
-            >
+              // onClick={() => navigate('/create-pin')}
+              className="bg-gray-900 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-800 ">
               Start Creating →
             </button>
           </div>
@@ -63,7 +62,7 @@ const Dashboard = () => {
         </div>
         <div className="text-center">
             <button
-                onClick={() => navigate('/discover')}
+                // onClick={() => navigate('/discover')}
                 className="bg-gray-800 text-white font-semibold py-3 px-6 rounded-full shadow-md hover:bg-gray-700 transition-colors duration-300"
             >
                 Start Discovering

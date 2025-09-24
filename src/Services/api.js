@@ -1,18 +1,16 @@
-import axios from "axios";
+import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://localhost:3113/api", 
+  baseURL: 'http://localhost:3113/api', // sesuaikan
 });
 
-api.interceptors.request.use(
-    (config) => { 
-        const token = localStorage.getItem('token'); // pastikan key-nya sesuai
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-    
-)
+// ambil token dari localStorage
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export default api;

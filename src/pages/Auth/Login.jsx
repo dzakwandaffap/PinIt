@@ -31,7 +31,7 @@ const Login = () => {
       
       // Simpan token ke local storage atau context/state management
       localStorage.setItem("token", response.data.token);
-      // navigate("/home"); 
+      navigate("/dashboard"); 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");
       console.error(err);

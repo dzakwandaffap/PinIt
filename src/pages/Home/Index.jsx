@@ -34,8 +34,10 @@ const Home = () => {
         
         {/* Call to Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
-          <button onClick={() => navigate('/home/pricing')} className="bg-gray-900 text-white font-semibold py-3 px-6 rounded-full shadow-lg ">
-              see our pricing plan &rarr;
+          <button 
+            onClick={() => navigate('/home/pricing')} 
+            className="bg-gray-900 text-white font-semibold py-3 px-6 rounded-full shadow-lg ">
+            see our pricing plan &rarr;
           </button>
           <button onClick={() => navigate('/register')} className="bg-transparent text-gray-900 font-semibold py-3 px-6 rounded-full border-2 border-gray-300 hover:bg-gray-50 transition-colors duration-300">
             Register for free &rarr;

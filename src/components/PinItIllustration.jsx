@@ -68,11 +68,10 @@ const PinItIllustration = () => {
             {/* Event 4 - Yellow Note */}
             <rect x="10" y="110" width="50" height="10" rx="4" fill="#2cbbf8ff" />
             {/* Event 4 - Yellow Note */}
-            <rect x="130" y="90" width="50" height="10" rx="4" fill="#06ab3dff"/>
+            <rect x="130" y="90" width="50" height="10" rx="4" fill="#06ab3dff" />
             
-            {/* Today's marker */}
-            <circle cx="105" cy="125" r="5" fill="#10B981" />
-            <text x="100" y="140" fontFamily="Arial" fontSize="10" fill="#10B981" fontWeight="bold">Today</text>
+            <rect x="70" y="125" width="50" height="10" rx="4" fill="#1555eaff"/>
+            
           </g>
         </g>
         

@@ -23,7 +23,7 @@ const Register = () => {
     try {
       const response = await api.post('/users/', form);
       console.log('Registration successful:', response.data);
-      // navigate('/home');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
     }
