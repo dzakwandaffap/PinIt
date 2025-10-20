@@ -39,9 +39,28 @@ const Profile = () => {
     try {
       setSaving(true);
       const token = localStorage.getItem('token');
-      const { data } = await api.put('/users/profile', editForm, {
-        headers: { Authorization: `Bearer ${token}` },
+
+      const formData = new FormData();
+      // isi semua field teks
+      formData.append('username', editForm.username || '');
+      formData.append('name', editForm.name || '');
+      formData.append('email', editForm.email || '');
+      formData.append('bio', editForm.bio || '');
+      formData.append('gender', editForm.gender || '');
+      formData.append('numberPhone', editForm.numberPhone || '');
+
+      // kalau user upload gambar baru, tambahkan file-nya
+      if (editForm.imageFile) {
+        formData.append('image', editForm.imageFile);
+      }
+
+      const { data } = await api.put('/users/profile', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
+
       setUser(data.data);
       setIsEditing(false);
       alert('Profil berhasil diperbarui');
@@ -53,6 +72,7 @@ const Profile = () => {
       setSaving(false);
     }
   };
+
 
   // 🔹 Aktifkan / batalkan mode edit
   const handleEditToggle = () => {
@@ -72,9 +92,17 @@ const Profile = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const imageUrl = URL.createObjectURL(file);
     setUser((prev) => ({ ...prev, image: imageUrl }));
+
+    // simpan file ke editForm agar bisa dikirim ke backend
+    setEditForm((prev) => ({
+      ...prev,
+      imageFile: file,
+    }));
   };
+
 
   // 🔹 Tampilan saat loading
   if (loading) {
@@ -113,10 +141,10 @@ const Profile = () => {
                 <div className="w-32 h-32 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
                   {user.image ? (
                     <img
-                      src={user.image}
+                      src={user.image?.startsWith('http') ? user.image : `${import.meta.env.VITE_API_URL}/${user.image}`}
                       alt="Profile"
-                      className="w-full h-full object-cover"
                     />
+
                   ) : (
                     <span className="text-4xl font-bold text-gray-600">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
