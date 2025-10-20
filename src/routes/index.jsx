@@ -12,19 +12,23 @@ const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
+                {/* Auth Routes */}
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
                 
-                <Route path="/home" element={<Home />}>
-                    <Route index element={<Home />} />
-                    <Route path="pricing" element={<PricingPage />} />
-                    <Route path="faq" element={<FAQ />} />
-                </Route>
+                {/* Public Routes */}
+                <Route path="/home" element={<Home />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/faq" element={<FAQ />} />
 
-                {/* Login ROUTE */}
+                {/* Protected Routes */}
                 <Route path="/dashboard" element={<AccessRoute><Dashboard /></AccessRoute>} />
                 <Route path="/profile" element={<AccessRoute><Profile /></AccessRoute>} />
 
+                {/* Redirect root to home */}
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                
+                {/* Catch all - redirect to home */}
                 <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
         </BrowserRouter>

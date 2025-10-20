@@ -10,34 +10,57 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Fetch profile saat komponen mount
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
+  // 🔹 Ambil data profil user
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token'); // ambil token dari localStorage
+      const token = localStorage.getItem('token');
       const { data } = await api.get('/users/profile', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setUser(data.data); // backend kirim { success: true, data: {...} }
+      setUser(data.data);
       setEditForm(data.data);
     } catch (err) {
       console.error('Error fetching user profile:', err);
-      alert('Gagal memuat profile');
+      const errorMsg = err.response?.data?.message || 'Gagal memuat profil';
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEditToggle = () => {
-    setIsEditing((prev) => !prev);
-    if (!isEditing && user) {
-      setEditForm(user);
+  // 🔹 Simpan perubahan profil
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      const token = localStorage.getItem('token');
+      const { data } = await api.put('/users/profile', editForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(data.data);
+      setIsEditing(false);
+      alert('Profil berhasil diperbarui');
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      const errorMsg = err.response?.data?.message || 'Gagal update profil';
+      alert(errorMsg);
+    } finally {
+      setSaving(false);
     }
   };
 
+  // 🔹 Aktifkan / batalkan mode edit
+  const handleEditToggle = () => {
+    setIsEditing((prev) => !prev);
+    if (!isEditing && user) setEditForm(user);
+  };
+
+  // 🔹 Update field di form edit
   const handleInputChange = (field, value) => {
     setEditForm((prev) => ({
       ...prev,
@@ -45,32 +68,15 @@ const Profile = () => {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      const token = localStorage.getItem('token');
-      const { data } = await api.put('/api/users/profile', editForm, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUser(data.data);
-      setIsEditing(false);
-      alert('Profile berhasil diperbarui');
-    } catch (err) {
-      console.error('Error updating profile:', err);
-      alert('Gagal update profile');
-    } finally {
-      setSaving(false);
-    }
-  };
-
+  // 🔹 Upload foto profil lokal (preview)
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const imageUrl = URL.createObjectURL(file);
-    setUser((prev) => ({ ...prev, profileImage: imageUrl }));
-    // TODO: integrasi API upload foto kalau endpoint sudah ada
+    setUser((prev) => ({ ...prev, image: imageUrl }));
   };
 
+  // 🔹 Tampilan saat loading
   if (loading) {
     return (
       <TemplateNav>
@@ -84,6 +90,7 @@ const Profile = () => {
     );
   }
 
+  // 🔹 Jika data user tidak ada
   if (!user) {
     return (
       <TemplateNav>
@@ -94,17 +101,19 @@ const Profile = () => {
     );
   }
 
+  // 🔹 Tampilan utama profil
   return (
     <TemplateNav>
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-6">
+          {/* --- Header Profil --- */}
           <div className="bg-white rounded-2xl shadow-sm border p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               <div className="relative">
                 <div className="w-32 h-32 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
-                  {user.profileImage ? (
+                  {user.image ? (
                     <img
-                      src={user.profileImage}
+                      src={user.image}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
@@ -141,16 +150,23 @@ const Profile = () => {
                 <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-gray-500">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
-                    <span>Member since {new Date(user.created_at).getFullYear()}</span>
+                    <span>
+                      Member since{' '}
+                      {user.timestamp
+                        ? new Date(user.timestamp).getFullYear()
+                        : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* --- Informasi Profil --- */}
           <div className="bg-white rounded-2xl shadow-sm border p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
             <div className="grid md:grid-cols-2 gap-6">
+              {/* Username */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Username
@@ -169,6 +185,7 @@ const Profile = () => {
                 )}
               </div>
 
+              {/* Full Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name
@@ -187,6 +204,7 @@ const Profile = () => {
                 )}
               </div>
 
+              {/* Email */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
@@ -207,6 +225,7 @@ const Profile = () => {
               </div>
             </div>
 
+            {/* Tombol Simpan / Batal */}
             {isEditing && (
               <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
                 <button

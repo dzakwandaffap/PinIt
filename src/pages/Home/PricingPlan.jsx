@@ -216,7 +216,7 @@ const PricingPage = () => {
             Can't find the answers you're looking for? Our FAQ section has detailed information on everything you need.
           </p>
           <button
-            onClick={() => navigate('/home/faq')}
+            onClick={() => navigate('/faq')}
             className="bg-gray-900 text-white font-semibold py-3 px-8 rounded-full shadow-lg 
                        hover:bg-gray-800 transition-colors duration-300 transform "
           >
