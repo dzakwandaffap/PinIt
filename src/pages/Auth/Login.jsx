@@ -22,23 +22,24 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      // Panggil API login dari backend Anda
-      const response = await api.post('/auth/login', form);
-      
-      // Simpan token ke local storage atau context/state management
-      localStorage.setItem("token", response.data.token);
-      navigate("/dashboard"); 
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please check your credentials.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await api.post('/auth/login', form);
+    console.log('Login response:', response.data); // cek isi response
+
+    localStorage.setItem('access_token', response.data.data.access_token);
+    console.log('Token disimpan:', localStorage.getItem('access_token'));
+
+    navigate('/dashboard');
+  } catch (err) {
+    console.error('Login gagal:', err.response?.data || err.message);
+    setError(err.response?.data?.message || 'Login failed.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#DCDCDC] flex items-center justify-center p-4">

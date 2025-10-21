@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Edit3, Calendar, Mail, Save, X } from 'lucide-react';
+import { Camera, Edit3, Calendar, Mail, Save, X, Phone, User, Info } from 'lucide-react';
 import TemplateNav from '../../Layout/TemplateNav';
 import api from '../../Services/api';
 
@@ -10,55 +10,46 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Fetch profile saat komponen mount
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // 🔹 Ambil data profil user
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const { data } = await api.get('/users/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await api.get('/users/profile');
       setUser(data.data);
       setEditForm(data.data);
     } catch (err) {
       console.error('Error fetching user profile:', err);
-      const errorMsg = err.response?.data?.message || 'Gagal memuat profil';
-      alert(errorMsg);
+      const msg = err.response?.data?.message || 'Gagal memuat profil';
+      alert(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔹 Simpan perubahan profil
+  // Simpan perubahan profil
   const handleSave = async () => {
     try {
       setSaving(true);
-      const token = localStorage.getItem('token');
-
       const formData = new FormData();
-      // isi semua field teks
-      formData.append('username', editForm.username || '');
-      formData.append('name', editForm.name || '');
-      formData.append('email', editForm.email || '');
-      formData.append('bio', editForm.bio || '');
-      formData.append('gender', editForm.gender || '');
-      formData.append('numberPhone', editForm.numberPhone || '');
 
-      // kalau user upload gambar baru, tambahkan file-nya
+      for (const key of ['username', 'name', 'email', 'bio', 'gender', 'numberPhone']) {
+        formData.append(key, editForm[key] || '');
+      }
+
       if (editForm.imageFile) {
         formData.append('image', editForm.imageFile);
       }
+      if (editForm.numberPhone === '+62' || editForm.numberPhone.length <= 3) {
+        alert('Nomor telepon tidak boleh 0 setelah +62');
+        setSaving(false);
+        return;
+      }
 
       const { data } = await api.put('/users/profile', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       setUser(data.data);
@@ -66,45 +57,44 @@ const Profile = () => {
       alert('Profil berhasil diperbarui');
     } catch (err) {
       console.error('Error updating profile:', err);
-      const errorMsg = err.response?.data?.message || 'Gagal update profil';
-      alert(errorMsg);
+      const msg = err.response?.data?.message || 'Gagal update profil';
+      alert(msg);
     } finally {
       setSaving(false);
     }
   };
 
-
-  // 🔹 Aktifkan / batalkan mode edit
   const handleEditToggle = () => {
     setIsEditing((prev) => !prev);
     if (!isEditing && user) setEditForm(user);
   };
 
-  // 🔹 Update field di form edit
   const handleInputChange = (field, value) => {
-    setEditForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setEditForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  // 🔹 Upload foto profil lokal (preview)
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setUser((prev) => ({ ...prev, image: imageUrl }));
-
-    // simpan file ke editForm agar bisa dikirim ke backend
-    setEditForm((prev) => ({
-      ...prev,
-      imageFile: file,
-    }));
+    const preview = URL.createObjectURL(file);
+    setUser((prev) => ({ ...prev, image: preview }));
+    setEditForm((prev) => ({ ...prev, imageFile: file }));
   };
 
+  //validasi taambahan buat numberphone
+  const handlePhoneChange = (value) => {
+  if (!value.startsWith('+62')) value = '+62' + value.replace(/^\+*/, '');
+  value = value.replace(/[^\d+]/g, '');
+  if (!value.startsWith('+62')) value = '+62';
+  const after = value.slice(3);
+  if (after.startsWith('0')) {
+    value = '+62' + after.slice(1);
+  }
 
-  // 🔹 Tampilan saat loading
+  setEditForm((prev) => ({ ...prev, numberPhone: value }));
+};
+
   if (loading) {
     return (
       <TemplateNav>
@@ -118,7 +108,6 @@ const Profile = () => {
     );
   }
 
-  // 🔹 Jika data user tidak ada
   if (!user) {
     return (
       <TemplateNav>
@@ -129,37 +118,37 @@ const Profile = () => {
     );
   }
 
-  // 🔹 Tampilan utama profil
   return (
     <TemplateNav>
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-6">
-          {/* --- Header Profil --- */}
+          {/* Header Profile */}
           <div className="bg-white rounded-2xl shadow-sm border p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               <div className="relative">
                 <div className="w-32 h-32 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
                   {user.image ? (
                     <img
-                      src={user.image?.startsWith('http') ? user.image : `${import.meta.env.VITE_API_URL}/${user.image}`}
+                      src={
+                        user.image.startsWith('blob')
+                          ? user.image
+                          : `${import.meta.env.VITE_API_URL || 'http://localhost:3113'}/${user.image}`
+                      }
                       alt="Profile"
+                      className="w-full h-full object-cover"
                     />
-
                   ) : (
                     <span className="text-4xl font-bold text-gray-600">
                       {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </span>
                   )}
                 </div>
-                <label className="absolute bottom-0 right-0 bg-gray-900 text-white p-2 rounded-full cursor-pointer hover:bg-gray-800">
-                  <Camera className="w-4 h-4" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
+                {isEditing && (
+                  <label className="absolute bottom-0 right-0 bg-gray-900 text-white p-2 rounded-full cursor-pointer hover:bg-gray-800">
+                    <Camera className="w-4 h-4" />
+                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
+                )}
               </div>
 
               <div className="flex-1 text-center md:text-left">
@@ -174,15 +163,15 @@ const Profile = () => {
                     {isEditing ? <X className="w-5 h-5" /> : <Edit3 className="w-5 h-5" />}
                   </button>
                 </div>
-                <p className="text-gray-600 text-lg mb-4">@{user.username || 'username'}</p>
+                <p className="text-gray-600 text-lg mb-4">@{user.username}</p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-gray-500">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
                     <span>
                       Member since{' '}
-                      {user.timestamp
-                        ? new Date(user.timestamp).getFullYear()
-                        : 'N/A'}
+                      {new Intl.DateTimeFormat('id-ID', { year: 'numeric', month: 'long' }).format(
+                        new Date(user.timestamp)
+                      )}
                     </span>
                   </div>
                 </div>
@@ -190,70 +179,60 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* --- Informasi Profil --- */}
+          {/* Informasi Profil */}
           <div className="bg-white rounded-2xl shadow-sm border p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Username */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Username
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={editForm.username || ''}
-                    onChange={(e) => handleInputChange('username', e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500"
-                  />
-                ) : (
-                  <p className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
-                    @{user.username || 'Not specified'}
-                  </p>
-                )}
-              </div>
-
-              {/* Full Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={editForm.name || ''}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500"
-                  />
-                ) : (
-                  <p className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
-                    {user.name || 'Not specified'}
-                  </p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                {isEditing ? (
-                  <input
-                    type="email"
-                    value={editForm.email || ''}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500"
-                  />
-                ) : (
-                  <div className="flex items-center px-4 py-3 bg-gray-50 rounded-lg text-gray-600">
-                    <Mail className="w-4 h-4 mr-2" />
-                    <span>{user.email || 'Not specified'}</span>
-                  </div>
-                )}
-              </div>
+              <ProfileField
+                label="Username"
+                value={editForm.username}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+                prefix="@"
+              />
+              <ProfileField
+                label="Full Name"
+                value={editForm.name}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                icon={<User className="w-4 h-4 mr-2" />}
+              />
+              <ProfileField
+                label="Email Address"
+                value={editForm.email}
+                isEditing={isEditing}
+                type="email"
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                icon={<Mail className="w-4 h-4 mr-2" />}
+              />
+              <ProfileField
+                label="Phone Number"
+                value={editForm.numberPhone || '+62'}
+                isEditing={isEditing}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                icon={<Phone className="w-4 h-4 mr-2" />}
+              />
+              <ProfileField
+                label="Gender"
+                value={editForm.gender}
+                isEditing={isEditing}
+                type="select"
+                onChange={(e) => handleInputChange('gender', e.target.value)}
+                options={[
+                  { label: 'Male', value: 'male' },
+                  { label: 'Female', value: 'female' },
+                ]}
+              />
+              <ProfileField
+                label="Bio"
+                value={editForm.bio}
+                isEditing={isEditing}
+                onChange={(e) => handleInputChange('bio', e.target.value)}
+                type="textarea"
+                fullWidth
+              />
             </div>
 
-            {/* Tombol Simpan / Batal */}
             {isEditing && (
               <div className="flex justify-end gap-4 mt-8 pt-6 border-t">
                 <button
@@ -279,5 +258,57 @@ const Profile = () => {
     </TemplateNav>
   );
 };
+
+// Komponen Field Reusable
+const ProfileField = ({
+  label,
+  value,
+  onChange,
+  isEditing,
+  type = 'text',
+  prefix = '',
+  icon,
+  options = [],
+  fullWidth = false,
+}) => (
+  <div className={fullWidth ? 'md:col-span-2' : ''}>
+    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    {isEditing ? (
+      type === 'textarea' ? (
+        <textarea
+          value={value || ''}
+          onChange={onChange}
+          rows={3}
+          className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500"
+        />
+      ) : type === 'select' ? (
+        <select
+          value={value || ''}
+          onChange={onChange}
+          className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500"
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          value={value || ''}
+          onChange={onChange}
+          className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-500"
+        />
+      )
+    ) : (
+      <div className="flex items-center px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+        {icon}
+        {prefix}
+        {value || 'Not specified'}
+      </div>
+    )}
+  </div>
+);
 
 export default Profile;
