@@ -21,7 +21,7 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/users/', form);
+      const response = await api.post('/users', form);
       console.log('Registration successful:', response.data);
       navigate('/dashboard');
     } catch (error) {
